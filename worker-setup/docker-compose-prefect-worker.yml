@@ -1,0 +1,15 @@
+services:
+  # worker / agent / automation
+  prefect_worker:
+    build:
+      context: ./prefect-worker
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PREFECT_WORK_POOL=process-work-pool
+      - PREFECT_WORKER_NAME=docker-jupyter-cpu
+      - PREFECT_API_URL=http://10.0.0.5:${PREFECT_PORT}/api # use private ip
+      - PREFECT_API_DATABASE_CONNECTION_URL=postgresql+asyncpg://${PREFECT_POSTGRES_USER}:${PREFECT_POSTGRES_PWD}@${POSTGRES_HOST}:${POSTGRES_PORT}/prefect_pg_db
+    volumes:
+      - /mnt:/mnt:ro

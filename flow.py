@@ -14,7 +14,7 @@ cwd = os.getcwd()
 print('ls:', os.listdir(cwd))
 
 # this is a quick fix that works
-# sys.path.insert(0, cwd)
+sys.path.insert(0, cwd)
 
 # N processors
 NUM_PROCESSES = 2
@@ -33,28 +33,26 @@ print('Initialized dask runner')
 
 
 # main execution logic
-@task(name="parralel_execute", log_prints=True)
-def parralel_execute(base_file_path: str, input_ids: List[int]):
+@task(name="parallel_execute", log_prints=True)
+def parallel_execute(base_file_path: str, input_ids: List[int]):
     logger = get_run_logger()
 
-    # it can read a .txt file successfully (with a relative path)
+    # this doesn't work with the error:
+    # ModuleNotFoundError: No module named 'utils'
+    say_debug("Inside parallel function")
+
+    cwd = os.getcwd()
+    logger.info(f'parallel cwd: {cwd}')
+    logger.info(f'flow ls: {os.listdir(cwd)}')
+
     logger.info("Loading files...")
     loaded_text = load_files(
         base_file_path
     )
     logger.info(f"Loaded text: {loaded_text}")
-    
-    cwd = os.getcwd()
-    logger.info(f'parallel ls: {os.listdir(cwd)}')
-
-    # this somehows doesn't work with the error:
-    # ModuleNotFoundError: No module named 'utils'
-    say_debug("Inside parralel function, after loading files")
 
     n_results = process_chunk(input_ids, loaded_text)
-
     logger.info(f"N results: {n_results}")
-
     return n_results
 
 
@@ -73,7 +71,7 @@ def main_execute_flow(input_ids: List[int]):
 
     futures = []
     for idx, chunk in enumerate(ids_chunks):
-        future = parralel_execute.submit(base_file_path=".", input_ids=chunk)
+        future = parallel_execute.submit(base_file_path=".", input_ids=chunk)
         futures.append(future)
         logger.info(f"Submitted chunk no. {idx}")
 
