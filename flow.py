@@ -42,9 +42,12 @@ def parallel_execute(base_file_path: str, input_ids: List[int]):
     say_debug("Inside parallel function")
 
     cwd = os.getcwd()
+    
     logger.info(f'parallel cwd: {cwd}')
     logger.info(f'parallel ls: {os.listdir(cwd)}')
 
+    # if we do quick fix `sys.path.insert(0, cwd)`
+    # we'll see the ls does include utils.py and it can load the local file... weird
     logger.info("Loading files...")
     loaded_text = load_files(
         base_file_path
