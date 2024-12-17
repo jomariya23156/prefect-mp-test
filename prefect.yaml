@@ -17,7 +17,7 @@ pull:
 - prefect.deployments.steps.git_clone:
     id: clone-step
     repository: https://github.com/jomariya23156/prefect-mp-test.git
-    branch: main
+    branch: master
 - prefect.deployments.steps.pip_install_requirements:
     directory: "{{ clone-step.directory }}"
     requirements_file: requirements.txt
