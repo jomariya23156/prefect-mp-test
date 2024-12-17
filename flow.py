@@ -14,7 +14,7 @@ cwd = os.getcwd()
 print('ls:', os.listdir(cwd))
 
 # this is a quick fix that works
-sys.path.insert(0, cwd)
+# sys.path.insert(0, cwd)
 
 # N processors
 NUM_PROCESSES = 2
@@ -43,7 +43,7 @@ def parallel_execute(base_file_path: str, input_ids: List[int]):
 
     cwd = os.getcwd()
     logger.info(f'parallel cwd: {cwd}')
-    logger.info(f'flow ls: {os.listdir(cwd)}')
+    logger.info(f'parallel ls: {os.listdir(cwd)}')
 
     logger.info("Loading files...")
     loaded_text = load_files(
