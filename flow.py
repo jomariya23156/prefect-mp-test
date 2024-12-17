@@ -43,10 +43,13 @@ def parralel_execute(base_file_path: str, input_ids: List[int]):
         base_file_path
     )
     logger.info(f"Loaded text: {loaded_text}")
+    
+    cwd = os.getcwd()
+    logger.info(f'parallel ls: {os.listdir(cwd)}')
 
     # this somehows doesn't work with the error:
     # ModuleNotFoundError: No module named 'utils'
-    say_debug("Inside parralel function")
+    say_debug("Inside parralel function, after loading files")
 
     n_results = process_chunk(input_ids, loaded_text)
 
@@ -61,6 +64,9 @@ def main_execute_flow(input_ids: List[int]):
 
     # this got printed
     say_debug("Inside main flow")
+
+    cwd = os.getcwd()
+    logger.info(f'main flow ls: {os.listdir(cwd)}')
 
     ids_chunks = split_ids(input_ids, NUM_PROCESSES)
     logger.info(f"Split work_ids!")
