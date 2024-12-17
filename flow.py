@@ -1,7 +1,6 @@
 import os
 import sys
 import numpy as np
-import pandas as pd
 import multiprocessing as mp
 from tqdm import tqdm
 from typing import Union, List, Dict, Optional, Any
@@ -11,8 +10,14 @@ from utils import say_debug
 
 from prefect_dask import DaskTaskRunner
 
-# use 60% of all processors
-NUM_PROCESSES = max(1, int(os.cpu_count() * 0.6))
+cwd = os.getcwd()
+print('ls:', os.listdir(cwd))
+
+# this is a quick fix that works
+# sys.path.insert(0, cwd)
+
+# N processors
+NUM_PROCESSES = 2
 print(f"Setting up a Dask cluster {NUM_PROCESSES} processes")
 
 dask_runner = DaskTaskRunner(
@@ -31,14 +36,17 @@ print('Initialized dask runner')
 @task(name="parralel_execute", log_prints=True)
 def parralel_execute(base_file_path: str, input_ids: List[int]):
     logger = get_run_logger()
-    say_debug("Inside parralel function")
 
-    ## Load all required secrets and vars
+    # it can read a .txt file successfully (with a relative path)
     logger.info("Loading files...")
     loaded_text = load_files(
         base_file_path
     )
     logger.info(f"Loaded text: {loaded_text}")
+
+    # this somehows doesn't work with the error:
+    # ModuleNotFoundError: No module named 'utils'
+    say_debug("Inside parralel function")
 
     n_results = process_chunk(input_ids, loaded_text)
 
@@ -50,6 +58,8 @@ def parralel_execute(base_file_path: str, input_ids: List[int]):
 @flow(name="main_execute_flow", task_runner=dask_runner, log_prints=True)
 def main_execute_flow(input_ids: List[int]):
     logger = get_run_logger()
+
+    # this got printed
     say_debug("Inside main flow")
 
     ids_chunks = split_ids(input_ids, NUM_PROCESSES)
